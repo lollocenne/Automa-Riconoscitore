@@ -54,3 +54,5 @@ if __name__ == "__main__":
     modello = AutomaRiconoscitore("ABAB", ["A", "B"])
     modello.creaNodiAutoma()
     print(modello)
+    print(modello)
+    print(modello)
