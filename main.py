@@ -31,13 +31,21 @@ class AutomaRiconoscitore:
             lenParola -= 1
         return sequenza
     
+    #richiama la funzione "trovaCollegamento()" per ogni sequenza
+    #e ritorna il collegamento con la lunghezza minore
+    def trovaCollegamentoCorto(self, key: str, carattere: str):
+        seqPossibili = []
+        for seq in self.sequenze:
+            seqPossibili.append(self.trovaCollegamento(seq, (seq[:-len(key)] if len(key) > 0 else seq) + carattere))
+        return min(seqPossibili, key=len)
+    
     #finisce di collegare tutti i nodi
     def collegaNodi(self, sequenza: str):
         for key, value in self.nodi.items():
             for carattere in self.caratteri:
                 if carattere in value:
                     continue
-                value[carattere] = self.trovaCollegamento(sequenza, (sequenza[:-len(key)] if len(key) > 0 else sequenza) + carattere)
+                value[carattere] = self.trovaCollegamentoCorto(key, carattere)
         
     #crea tutti i nodi con tutti i collegamenti
     def creaNodiAutoma(self):
@@ -53,6 +61,6 @@ class AutomaRiconoscitore:
 
 
 if __name__ == "__main__":
-    modello = AutomaRiconoscitore(["ABA"], ["A", "B"])
+    modello = AutomaRiconoscitore(["ABA", "BBA"], ["A", "B"])
     modello.creaNodiAutoma()
     print(modello)
