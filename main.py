@@ -25,7 +25,7 @@ class AutomaRiconoscitore:
     def trovaCollegamento(self, sequenza: str, parola: str) -> str:
         lenParola = len(parola)
         while parola:
-            if parola + sequenza[lenParola:] in self.nodi:
+            if parola == sequenza[:lenParola]:
                 return sequenza[lenParola:]
             parola = parola[1:]
             lenParola -= 1
@@ -37,7 +37,7 @@ class AutomaRiconoscitore:
             for carattere in self.caratteri:
                 if carattere in value:
                     continue
-                value[carattere] = self.trovaCollegamento(sequenza, sequenza[:len(key)] + carattere)
+                value[carattere] = self.trovaCollegamento(sequenza, (sequenza[:-len(key)] if len(key) > 0 else sequenza) + carattere)
         
     #crea tutti i nodi con tutti i collegamenti
     def creaNodiAutoma(self):
