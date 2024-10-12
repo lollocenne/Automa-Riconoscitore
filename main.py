@@ -12,7 +12,7 @@ class AutomaRiconoscitore:
         self.nodi: dict[str : dict[str : dict]] = {}
     
     #crea e collega i nodi, conta solo i caratteri che fanno parte della sequenza giusta
-    def creaNodi(self, sequenza: str):
+    def creaNodi(self, sequenza: str) -> None:
         self.nodi[""] = {}
         for i in range(len(sequenza)-1, -1, -1):
             if sequenza[i:] in self.nodi:
@@ -33,7 +33,7 @@ class AutomaRiconoscitore:
     
     #richiama la funzione "trovaCollegamento()" per ogni sequenza
     #e ritorna il collegamento con la lunghezza minore
-    def trovaCollegamentoCorto(self, key: str, carattere: str):
+    def trovaCollegamentoCorto(self, key: str, carattere: str) -> str:
         seqPossibili = []
         for seq in self.sequenze:
             seqPossibili.append(self.trovaCollegamento(seq, (seq[:-len(key)] if len(key) > 0 else seq) + carattere))
@@ -41,20 +41,19 @@ class AutomaRiconoscitore:
     
     #finisce di collegare tutti i nodi controllando
     #cosa deve succede quando inserisci un carattere sbagliato
-    def collegaNodi(self, sequenza: str):
+    def collegaNodi(self) -> None:
         for key, value in self.nodi.items():
             for carattere in self.caratteri:
                 if carattere in value:
                     continue
                 value[carattere] = self.trovaCollegamentoCorto(key, carattere)
-        
+    
     #crea tutti i nodi con tutti i collegamenti
     def creaNodiAutoma(self):
         self.__init__(self.sequenze, self.caratteri) #inizializza la classe
         for seq in self.sequenze:
             self.creaNodi(seq) #crea i nodi
-        for seq in self.sequenze:
-            self.collegaNodi(seq) #collega i nodi
+        self.collegaNodi() #collega i nodi
     
     def __str__(self):
         return "\n".join([f"'{key}' : '{value}'" for key, value in self.nodi.items()])
