@@ -11,7 +11,7 @@ class AutomaRiconoscitore:
         #invece degli stati (s1,s2,s3) abbiamo quindi quale sequenza deve riconoscere (aba,ba,a)
         self.nodi: dict[str : dict[str : dict]] = {}
     
-    #crea e collega i nodi, conta solo i caratteri che fanno parte della sequenza giusta,
+    #crea e collega i nodi, conta solo i caratteri che fanno parte della sequenza giusta
     def creaNodi(self, sequenza: str):
         self.nodi[""] = {}
         for i in range(len(sequenza)-1, -1, -1):
@@ -39,7 +39,8 @@ class AutomaRiconoscitore:
             seqPossibili.append(self.trovaCollegamento(seq, (seq[:-len(key)] if len(key) > 0 else seq) + carattere))
         return min(seqPossibili, key=len)
     
-    #finisce di collegare tutti i nodi
+    #finisce di collegare tutti i nodi controllando
+    #cosa deve succede quando inserisci un carattere sbagliato
     def collegaNodi(self, sequenza: str):
         for key, value in self.nodi.items():
             for carattere in self.caratteri:
