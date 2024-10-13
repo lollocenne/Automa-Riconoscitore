@@ -7,7 +7,7 @@ class QGMGraphicsScene(QGraphicsScene):
     def __init__(self, parent = None):
         super().__init__(parent)
         
-        self.width, self.height = 64000, 64000
+        self.width, self.height = 4000, 2000
         self.setSceneRect(self.width//2, self.height//2, self.width, self.height)
         
         self.setBackgroundBrush(QColor("#404040"))
