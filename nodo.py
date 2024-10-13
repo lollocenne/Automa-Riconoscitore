@@ -6,13 +6,21 @@
 #ogni nodo sarà salvato in un dizionario con lo stato come chiave, e l'istanza come valore
 
 class Nodo:
-    x = 30
-    def __init__(self, y: int = 0, stato: str = "", puntaA: dict[str : str] = {}):
+    x = 200
+    def __init__(self, y: int = 0, stato: str = "", puntaA: dict[str, str] = {}, showNodeFunc = None, showNodeFuncParametri: tuple = ()):
         self.x = Nodo.x
         self.y = y
         
-        self.grandezza: int = 20        
-        Nodo.x += self.grandezza*2
+        self.diametro: int = 100        
+        Nodo.x += self.diametro*2
         
         self.stato = stato
         self.puntaA = puntaA    #{lettera : stato}
+        
+        self.showNode = showNodeFunc(
+            self.x + showNodeFuncParametri[0],
+            self.y + showNodeFuncParametri[1],
+            self.diametro, self.diametro,
+            showNodeFuncParametri[2],
+            showNodeFuncParametri[3])
+        self.showNode.setFlag(showNodeFuncParametri[4])

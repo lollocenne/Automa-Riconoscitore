@@ -9,7 +9,7 @@ class AutomaRiconoscitore:
         #quale nodo con una sequenza deve puntare:
         #nodi = {sequenza : {carattere1 : sequenzaNodo1, carattere2 : sequenzaNodo2}}
         #invece degli stati (s1,s2,s3) abbiamo quindi quale sequenza deve riconoscere (aba,ba,a)
-        self.nodi: dict[str : dict[str : dict]] = {}
+        self.nodi: dict[str, dict[str, dict]] = {}
     
     #crea e collega i nodi, conta solo i caratteri che fanno parte della sequenza giusta
     def creaNodi(self, sequenza: str) -> None:

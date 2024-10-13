@@ -36,7 +36,7 @@ class QGMGraphicsScene(QGraphicsScene):
                 lines2.append(QLine(x, top, x, bottom))
             else:
                 lines1.append(QLine(x, top, x, bottom))
-            
+        
         for y in range(firtsTop, bottom, self.greedSize):
             if y % 100 == 0:
                 lines2.append(QLine(left, y, right, y))

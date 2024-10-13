@@ -1,5 +1,7 @@
 import sys
 from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
 from scene import QGMGraphicsScene
 
 from main import AutomaRiconoscitore
@@ -10,18 +12,17 @@ class MainWindow(QWidget):
     def __init__(self, parent = None):
         super().__init__(parent)
         
-        self.nodi = self.creaNodi(["ABAB"], ["A", "B"])
-        
         self.initUI()
+        
+        self.nodi = self.creaNodi(["ABAB"], ["A", "B"])
     
-    @staticmethod
-    def creaNodi(sequenze: list[str] = [], caratteri: list[str] = []) -> dict[str : dict[str : Nodo]]:
+    def creaNodi(self, sequenze: list[str] = [], caratteri: list[str] = []) -> dict[str, dict[str, Nodo]]:
         modello = AutomaRiconoscitore(sequenze, caratteri)
         modello.creaNodiAutoma()
         
         nodi = {}
         for key, value in modello.nodi.items():
-            nodi[key] = Nodo(0, key, value)
+            nodi[key] = Nodo(0, key, value, self.scene.addEllipse, (3500, 2000, QPen(Qt.black), QBrush(QColor.fromRgbF(.15,.15,.15)), QGraphicsItem.ItemIsMovable))
         return nodi
     
     def initUI(self):
@@ -38,6 +39,11 @@ class MainWindow(QWidget):
         self.layout.addWidget(self.view)
         
         self.showMaximized()
+        
+        self.showNodes()
+    
+    def showNodes(self):
+        ...
 
 
 if __name__ == "__main__":
