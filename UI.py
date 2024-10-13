@@ -22,7 +22,7 @@ class MainWindow(QWidget):
         
         nodi = {}
         for key, value in modello.nodi.items():
-            nodi[key] = Nodo(0, key, value, self.scene.addEllipse, (3500, 2000, QPen(Qt.black), QBrush(QColor.fromRgbF(.15,.15,.15)), QGraphicsItem.ItemIsMovable))
+            nodi[key] = Nodo(0, key, value, self.scene.addEllipse, (3500, 2000), QPen(Qt.black), QBrush(QColor.fromRgbF(.15,.15,.15)), QGraphicsItem.ItemIsMovable)
         return nodi
     
     def initUI(self):
@@ -39,11 +39,6 @@ class MainWindow(QWidget):
         self.layout.addWidget(self.view)
         
         self.showMaximized()
-        
-        self.showNodes()
-    
-    def showNodes(self):
-        ...
 
 
 if __name__ == "__main__":

@@ -7,7 +7,7 @@
 
 class Nodo:
     x = 200
-    def __init__(self, y: int = 0, stato: str = "", puntaA: dict[str, str] = {}, showNodeFunc = None, showNodeFuncParametri: tuple = ()):
+    def __init__(self, y: int = 0, stato: str = "", puntaA: dict[str, str] = {}, showNodeFunc = None, coord: tuple[int] = (0, 0), pen = None, brush = None, flag = None):
         self.x = Nodo.x
         self.y = y
         
@@ -17,10 +17,5 @@ class Nodo:
         self.stato = stato
         self.puntaA = puntaA    #{lettera : stato}
         
-        self.showNode = showNodeFunc(
-            self.x + showNodeFuncParametri[0],
-            self.y + showNodeFuncParametri[1],
-            self.diametro, self.diametro,
-            showNodeFuncParametri[2],
-            showNodeFuncParametri[3])
-        self.showNode.setFlag(showNodeFuncParametri[4])
+        self.showNode = showNodeFunc(self.x + coord[0], self.y + coord[1], self.diametro, self.diametro, pen, brush)
+        self.showNode.setFlag(flag)
