@@ -3,6 +3,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from scene import QGMGraphicsScene
+from view import QGMGraphicsView
 
 from main import AutomaRiconoscitore
 from nodo import Nodo
@@ -34,8 +35,7 @@ class MainWindow(QWidget):
         
         self.scene = QGMGraphicsScene()
         
-        self.view = QGraphicsView(self)
-        self.view.setScene(self.scene)
+        self.view = QGMGraphicsView(self.scene, self)
         self.layout.addWidget(self.view)
         
         self.showMaximized()
