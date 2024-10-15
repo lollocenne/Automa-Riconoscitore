@@ -4,12 +4,16 @@
 #puntaA: dict[str : str] -> dizionario che indica per ogni carattere possibile a quale stato bisogna collegare il nodo
 
 #ogni nodo sarà salvato in un dizionario con lo stato come chiave, e l'istanza come valore
+from PyQt5.QtWidgets import QGraphicsItem
+from PyQt5.QtGui import QPen, QBrush, QColor
+from PyQt5.QtCore import Qt
+
 
 class Nodo:
     x = 200
-    def __init__(self, y: int = 0, stato: str = "", puntaA: dict[str, str] = {}, showNodeFunc = None, coord: tuple[int] = (0, 0), pen = None, brush = None, flag = None):
-        self.x = Nodo.x
-        self.y = y
+    def __init__(self, y: int = 0, stato: str = "", puntaA: dict[str, str] = {}, scene = None, coord: tuple[int] = (0, 0)):
+        self.x = Nodo.x + coord[0]
+        self.y = y + coord[1]
         
         self.diametro: int = 100        
         Nodo.x += self.diametro*2
@@ -17,5 +21,16 @@ class Nodo:
         self.stato = stato
         self.puntaA = puntaA    #{lettera : stato}
         
-        self.showNode = showNodeFunc(self.x + coord[0], self.y + coord[1], self.diametro, self.diametro, pen, brush)
-        self.showNode.setFlag(flag)
+        self.showNode = scene.addEllipse(self.x, self.y, self.diametro, self.diametro, QPen(Qt.black), QBrush(QColor.fromRgbF(.15,.15,.15)))
+        self.showNode.setFlag(QGraphicsItem.ItemIsMovable)
+        self.showNode.setPos(0, 0)
+    
+    def getCenter(self) -> tuple[int]:
+        self.showNode.update()
+        
+        position = self.showNode.scenePos()
+        
+        if position.x() == 0.0 and position.y() == 0.0:
+            return (self.x + self.diametro / 2, self.y + self.diametro / 2)
+        
+        return (position.x() + self.diametro / 2, position.y() + self.diametro / 2)
