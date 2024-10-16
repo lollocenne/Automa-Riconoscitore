@@ -15,7 +15,7 @@ class MainWindow(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.initUI()
-        self.nodi = self.creaNodi(["BBA", "ABA"], ["A", "B"])
+        self.nodi = self.creaNodi(["BBAA"], ["A", "B"])
         self.curveItems = []
         self.creaCollegamenti()
 
@@ -50,7 +50,7 @@ class MainWindow(QWidget):
         else:
             offset = math.dist((x1, y1), (x2, y2)) / 2
             
-            if x1 < x2 or y1 > y2:
+            if y1 > y2:
                 ctrl = QPointF((x1 + x2) / 2, max(y1, y2) + offset)
             else:
                 ctrl = QPointF((x1 + x2) / 2, min(y1, y2) - offset)
@@ -71,7 +71,7 @@ class MainWindow(QWidget):
         label = self.scene.addText(carattere, QFont("Arial", 12))
         labelRect = label.boundingRect()
         
-        if x1 < x2 or y1 > y2:
+        if y1 > y2:
             label.setPos(pointMid.x() - labelRect.width() / 2, pointMid.y() + labelRect.height() / 2 - 10)
         else:
             label.setPos(pointMid.x() - labelRect.width() / 2, pointMid.y() - labelRect.height() / 2 - 10)
@@ -84,9 +84,14 @@ class MainWindow(QWidget):
             self.scene.removeItem(label)
         self.curveItems.clear()
     
+    def reDrawText(self):
+        for nodo in self.nodi.values():
+            nodo.drawState()
+    
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
             self.creaCollegamenti()
+            self.reDrawText()
         return super().mousePressEvent(event)
 
     def initUI(self):
