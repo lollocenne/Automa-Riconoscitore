@@ -23,14 +23,10 @@ class Nodo:
         
         self.showNode = scene.addEllipse(self.x, self.y, self.diametro, self.diametro, QPen(Qt.black), QBrush(QColor.fromRgbF(.15,.15,.15)))
         self.showNode.setFlag(QGraphicsItem.ItemIsMovable)
-        self.showNode.setPos(0, 0)
     
     def getCenter(self) -> tuple[int]:
-        self.showNode.update()
-        
         position = self.showNode.scenePos()
         
-        if position.x() == 0.0 and position.y() == 0.0:
-            return (self.x + self.diametro / 2, self.y + self.diametro / 2)
-        
-        return (position.x() + self.diametro / 2, position.y() + self.diametro / 2)
+        centerX = position.x() + self.x + self.diametro / 2
+        centerY = position.y() + self.y + self.diametro / 2
+        return (centerX, centerY)

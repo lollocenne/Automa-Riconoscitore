@@ -22,7 +22,7 @@ class MainWindow(QWidget):
         modello.creaNodiAutoma()
         nodi = {}
         for key, value in modello.nodi.items():
-            nodo = Nodo(0, key, value, self.scene, (3500, 2000))
+            nodo = Nodo(0, key, value, self.scene, (4000, 2000))
             nodo.showNode.setFlag(QGraphicsItem.ItemIsMovable, True)
             nodi[key] = nodo
         return nodi
@@ -60,6 +60,11 @@ class MainWindow(QWidget):
             self.scene.removeItem(curva)
             self.scene.removeItem(label)
         self.curveItems.clear()
+    
+    def mousePressEvent(self, event):
+        if event.button() == Qt.LeftButton:
+            self.creaCollegamenti()
+        return super().mousePressEvent(event)
 
     def initUI(self):
         self.setWindowTitle("Automa Riconoscitore")
