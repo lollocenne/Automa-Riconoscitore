@@ -9,6 +9,7 @@ from scene import QGMGraphicsScene
 from view import QGMGraphicsView
 from main import AutomaRiconoscitore
 from nodo import Nodo
+from miniWindow import MiniWindow
 
 
 class MainWindow(QWidget):
@@ -20,10 +21,10 @@ class MainWindow(QWidget):
         self.creaCollegamenti()
 
     def creaNodi(self, sequenze: list[str] = [], caratteri: list[str] = []) -> dict[str, Nodo]:
-        modello = AutomaRiconoscitore(sequenze, caratteri)
-        modello.creaNodiAutoma()
+        self.modello = AutomaRiconoscitore(sequenze, caratteri)
+        self.modello.creaNodiAutoma()
         nodi = {}
-        for key, value in reversed(modello.nodi.items()):
+        for key, value in reversed(self.modello.nodi.items()):
             nodo = Nodo(0, key, value, self.scene, (4000, 2000))
             nodo.showNode.setFlag(QGraphicsItem.ItemIsMovable, True)
             nodi[key] = nodo
@@ -93,12 +94,30 @@ class MainWindow(QWidget):
             self.creaCollegamenti()
             self.reDrawText()
         return super().mousePressEvent(event)
-
+    
+    def drawTopInputs(self):
+        self.modello = AutomaRiconoscitore(["BBAA"], ["A", "B"])    #VA ELIMINATO
+        self.modello.creaNodiAutoma()                               #VA ELIMINATO
+        finestraTop = MiniWindow(self, self.modello.sequenze)
+        finestraTop.aggiungiLabel("Sequenza:")
+        finestraTop.aggiungiBottone("BBAA")
+        
+        self.layout.addWidget(finestraTop.getayout())
+    
+    def drawBottomInputs(self):
+        finestraBottom = MiniWindow(self, self.modello.sequenze)
+        finestraBottom.aggiungiLabel("Caratteri:")
+        
+        self.layout.addWidget(finestraBottom.getayout())
+    
     def initUI(self):
         self.setWindowTitle("Automa Riconoscitore")
         self.layout = QVBoxLayout()
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(self.layout)
+        
+        self.drawTopInputs()
+        self.drawBottomInputs()
         
         self.scene = QGMGraphicsScene()
         self.view = QGMGraphicsView(self.scene, self)
