@@ -1,13 +1,13 @@
+from PyQt5.QtWidgets import QGraphicsTextItem, QGraphicsItem
+from PyQt5.QtGui import QPen, QBrush, QColor, QFont
+from PyQt5.QtCore import Qt
+
 #classe che rappresenta ogni nodo
 #y: int -> la y del nodo
 #stato: str -> indica lo stato del nodo, questo stato verrà mostrato all'utente
 #puntaA: dict[str : str] -> dizionario che indica per ogni carattere possibile a quale stato bisogna collegare il nodo
 
 #ogni nodo sarà salvato in un dizionario con lo stato come chiave, e l'istanza come valore
-
-from PyQt5.QtWidgets import QGraphicsTextItem, QGraphicsItem
-from PyQt5.QtGui import QPen, QBrush, QColor, QFont
-from PyQt5.QtCore import Qt
 
 class Nodo:
     x = -300
@@ -26,7 +26,6 @@ class Nodo:
         self.showNode = scene.addEllipse(self.x, self.y, self.diametro, self.diametro, QPen(Qt.black), QBrush(QColor.fromRgbF(.15, .15, .15)))
         self.showNode.setFlag(QGraphicsItem.ItemIsMovable)
         self.showNode.setZValue(1)
-        
         
         self.textItem = QGraphicsTextItem(self.stato)
         font = QFont()

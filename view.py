@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QGraphicsView
-from PyQt5.QtGui import *
-from PyQt5.QtCore import *
+from PyQt5.QtGui import QPainter, QMouseEvent
+from PyQt5.QtCore import Qt, QEvent
 
 
 class QGMGraphicsView(QGraphicsView):    
