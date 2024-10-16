@@ -10,7 +10,7 @@ from PyQt5.QtCore import Qt
 
 
 class Nodo:
-    x = 200
+    x = 0
     def __init__(self, y: int = 0, stato: str = "", puntaA: dict[str, str] = {}, scene = None, coord: tuple[int] = (0, 0)):
         self.x = Nodo.x + coord[0]
         self.y = y + coord[1]
@@ -23,6 +23,7 @@ class Nodo:
         
         self.showNode = scene.addEllipse(self.x, self.y, self.diametro, self.diametro, QPen(Qt.black), QBrush(QColor.fromRgbF(.15,.15,.15)))
         self.showNode.setFlag(QGraphicsItem.ItemIsMovable)
+        self.showNode.setZValue(1)
     
     def getCenter(self) -> tuple[int]:
         position = self.showNode.scenePos()
