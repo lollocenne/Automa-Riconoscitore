@@ -17,6 +17,7 @@ class MainWindow(QWidget):
         super().__init__(parent)
         self.initUI()
         self.nodi = self.creaNodi(["BBAA"], ["A", "B"])
+        self.drawObjects()
         self.curveItems = []
         self.creaCollegamenti()
 
@@ -96,20 +97,33 @@ class MainWindow(QWidget):
             self.reDrawText()
         return super().mousePressEvent(event)
     
-    def drawTopInputs(self):
-        self.modello = AutomaRiconoscitore(["BBAA"], ["A", "B"])    #VA ELIMINATO
-        self.modello.creaNodiAutoma()                               #VA ELIMINATO
-        finestraTop = MiniWindow(self, self.modello.sequenze)
-        finestraTop.aggiungiLabel("Sequenza:")
-        finestraTop.aggiungiBottone("BBAA")
+    def disegnaCreaAutomaBottone(self):
+        def ricreaAutoma():
+            self.scene.clear()
+            Nodo.x = Nodo.fixedX
+            Nodo.y = Nodo.fixedY
+            self.disegnaLeggenda()
+            self.nodi = self.creaNodi(["ABAB"], ["A", "B"])
+            self.curveItems = []
+            self.creaCollegamenti()
         
-        self.layout.addWidget(finestraTop.getayout())
+        finestra = MiniWindow(self)
+        finestra.aggiungiBottonePermanente("CREA AUTOMA", ricreaAutoma)
+        
+        self.layout.addWidget(finestra.getayout())
     
-    def drawBottomInputs(self):
-        finestraBottom = MiniWindow(self, self.modello.sequenze)
-        finestraBottom.aggiungiLabel("Caratteri:")
+    def disegnaSequenzeInputs(self):
+        finestra = MiniWindow(self, self.modello.sequenze)
+        finestra.aggiungiLabel("Sequenza:")
+        finestra.aggiungiBottone("BBAA")
         
-        self.layout.addWidget(finestraBottom.getayout())
+        self.layout.addWidget(finestra.getayout())
+    
+    def disegnaCaratteriInputs(self):
+        finestra = MiniWindow(self, self.modello.caratteri)
+        finestra.aggiungiLabel("Caratteri:")
+        
+        self.layout.addWidget(finestra.getayout())
     
     def initUI(self):
         self.setWindowTitle("Automa Riconoscitore")
@@ -117,19 +131,24 @@ class MainWindow(QWidget):
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(self.layout)
         
-        self.drawTopInputs()
-        self.drawBottomInputs()
-        
         self.scene = QGMGraphicsScene()
         self.view = QGMGraphicsView(self.scene, self)
         
-        legendColor = self.scene.addText("ROSSO : USCITA\nNERO  : ENTRATA", QFont("Consolas", 12))
-        legendColor.setDefaultTextColor(QColor("white"))
-        legendColor.setFlag(QGraphicsItem.ItemIsMovable)
-        legendColor.setPos(self.scene.width, self.scene.height - 200)
-        
         self.layout.addWidget(self.view)
         self.showMaximized()
+    
+    def disegnaLeggenda(self):
+        legendaColori = self.scene.addText("ROSSO : USCITA\nNERO  : ENTRATA", QFont("Consolas", 12))
+        legendaColori.setDefaultTextColor(QColor("white"))
+        legendaColori.setFlag(QGraphicsItem.ItemIsMovable)
+        legendaColori.setPos(self.scene.width, self.scene.height - 200)
+    
+    def drawObjects(self):
+        self.disegnaCreaAutomaBottone()
+        self.disegnaSequenzeInputs()
+        self.disegnaCaratteriInputs()
+        
+        self.disegnaLeggenda()
 
 
 if __name__ == "__main__":

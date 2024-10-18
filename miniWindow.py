@@ -4,7 +4,7 @@ from PyQt5.QtCore import *
 
 
 class MiniWindow():
-    def __init__(self, window, tipo: list[str]):
+    def __init__(self, window, tipo: list[str] = []):
         self.tipo = tipo    #sequenze o caratteri
         
         self.finestra = QFrame(window)
@@ -31,15 +31,29 @@ class MiniWindow():
         
         self.layoutFinestra.addWidget(label)
     
-    def aggiungiBottone(self, testo):
+    def aggiungiBottone(self, testo = "", func = None):
         bottone = QPushButton(testo, self.finestra)
-        bottone.clicked.connect(lambda: self.bottonePremuto(bottone, testo, self.tipo))
+        bottone.clicked.connect(lambda: self.bottonePremuto(bottone, testo, self.tipo, func))
+        
+        self.layoutFinestra.addWidget(bottone)
+    
+    def aggiungiBottonePermanente(self, testo = "", func = None):
+        bottone = QPushButton(testo, self.finestra)
+        bottone.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        bottone.clicked.connect(func)
         
         self.layoutFinestra.addWidget(bottone)
     
     @staticmethod
-    def bottonePremuto(bottone, testo: str, tipo: list[str]):
-        tipo.remove(testo)
+    def bottonePremuto(bottone, testo: str, tipo: list[str], func):
+        if func:
+            func()
+        
+        try:
+            tipo.remove(testo)
+        except:
+            pass
+        
         bottone.deleteLater()
     
     def getayout(self):

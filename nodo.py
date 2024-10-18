@@ -10,14 +10,16 @@ from PyQt5.QtCore import Qt
 #ogni nodo sarà salvato in un dizionario con lo stato come chiave, e l'istanza come valore
 
 class Nodo:
-    x = -300
-    y = 0
+    fixedX = -300
+    fixedY = 0
+    x = fixedX
+    y = fixedY
     def __init__(self, y: int = 0, stato: str = "", puntaA: dict[str, str] = {}, scene = None, coord: tuple[int] = (0, 0)):
         self.x = Nodo.x + coord[0]
         self.y = Nodo.y + y + coord[1]
         
         self.diametro: int = 100        
-        Nodo.x += self.diametro*3
+        Nodo.x += self.diametro*2.5
         Nodo.y += 1
         
         self.stato = stato if stato else "<finale>"
