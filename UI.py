@@ -70,6 +70,7 @@ class MainWindow(QWidget):
         pointMid = path.pointAtPercent(0.5)
         
         label = self.scene.addText(carattere, QFont("Arial", 12))
+        label.setDefaultTextColor(QColor("white"))
         labelRect = label.boundingRect()
         
         if y1 > y2:
@@ -121,6 +122,11 @@ class MainWindow(QWidget):
         
         self.scene = QGMGraphicsScene()
         self.view = QGMGraphicsView(self.scene, self)
+        
+        legendColor = self.scene.addText("ROSSO : USCITA\nNERO  : ENTRATA", QFont("Consolas", 12))
+        legendColor.setDefaultTextColor(QColor("white"))
+        legendColor.setFlag(QGraphicsItem.ItemIsMovable)
+        legendColor.setPos(self.scene.width, self.scene.height - 200)
         
         self.layout.addWidget(self.view)
         self.showMaximized()
