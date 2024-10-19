@@ -16,7 +16,7 @@ class MainWindow(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.initUI()
-        self.nodi = self.creaNodi(["BBAA"], ["A", "B"])
+        self.nodi = self.creaNodi(["BBA", "ABA"], ["A", "B"])
         self.drawObjects()
         self.curveItems = []
         self.creaCollegamenti()
@@ -103,7 +103,7 @@ class MainWindow(QWidget):
             Nodo.x = Nodo.fixedX
             Nodo.y = Nodo.fixedY
             self.disegnaLeggenda()
-            self.nodi = self.creaNodi(["ABAB"], ["A", "B"])
+            self.nodi = self.creaNodi(self.modello.sequenze, self.modello.caratteri)
             self.curveItems = []
             self.creaCollegamenti()
         
@@ -115,13 +115,18 @@ class MainWindow(QWidget):
     def disegnaSequenzeInputs(self):
         finestra = MiniWindow(self, self.modello.sequenze)
         finestra.aggiungiLabel("Sequenza:")
-        finestra.aggiungiBottone("BBAA")
+        finestra.aggiungiTextBox("Scrivi Sequenza")
+        for s in self.modello.sequenze:
+            finestra.aggiungiBottone(s)
         
         self.layout.addWidget(finestra.getayout())
     
     def disegnaCaratteriInputs(self):
         finestra = MiniWindow(self, self.modello.caratteri)
         finestra.aggiungiLabel("Caratteri:")
+        finestra.aggiungiTextBox("Scrivi Carattere")
+        for c in self.modello.caratteri:
+            finestra.aggiungiBottone(c)
         
         self.layout.addWidget(finestra.getayout())
     

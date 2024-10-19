@@ -9,7 +9,7 @@ class MiniWindow():
         
         self.finestra = QFrame(window)
         self.finestra.setFrameShape(QFrame.StyledPanel)
-        self.finestra.setFixedHeight(50)
+        self.finestra.setFixedHeight(60)
         
         self.finestra.setStyleSheet("""
             background-color: rgb(50, 50, 50);
@@ -33,12 +33,15 @@ class MiniWindow():
     
     def aggiungiBottone(self, testo = "", func = None):
         bottone = QPushButton(testo, self.finestra)
+        bottone.setFixedHeight(self.finestra.height()//2)
+        bottone.setFixedWidth(bottone.fontMetrics().boundingRect(bottone.text()).width() + 20)
         bottone.clicked.connect(lambda: self.bottonePremuto(bottone, testo, self.tipo, func))
         
         self.layoutFinestra.addWidget(bottone)
     
     def aggiungiBottonePermanente(self, testo = "", func = None):
         bottone = QPushButton(testo, self.finestra)
+        bottone.setFixedHeight(self.finestra.height()//2)
         bottone.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         bottone.clicked.connect(func)
         
@@ -51,10 +54,27 @@ class MiniWindow():
         
         try:
             tipo.remove(testo)
-        except:
+        except ValueError:
             pass
         
         bottone.deleteLater()
+    
+    def aggiungiTextBox(self, testo: str):
+        self.textBox = QLineEdit(self.finestra)
+        self.textBox.setPlaceholderText(testo)
+        self.textBox.setFixedWidth(200)
+        self.textBox.returnPressed.connect(self.aggiungiInput)
+        
+        self.layoutFinestra.addWidget(self.textBox)
+    
+    def aggiungiInput(self):
+        input = self.textBox.text()
+        
+        if not input: return
+        
+        self.aggiungiBottone(input)
+        self.tipo.append(input)
+        self.textBox.clear()
     
     def getayout(self):
         return self.finestra

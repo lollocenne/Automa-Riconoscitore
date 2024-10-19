@@ -22,7 +22,7 @@ class Nodo:
         Nodo.x += self.diametro*2.5
         Nodo.y += 1
         
-        self.stato = stato if stato else "<finale>"
+        self.stato = stato or "<finale>"
         self.puntaA = puntaA    #{lettera : stato}
         
         self.showNode = scene.addEllipse(self.x, self.y, self.diametro, self.diametro, QPen(Qt.black), QBrush(QColor.fromRgbF(.15, .15, .15)))
