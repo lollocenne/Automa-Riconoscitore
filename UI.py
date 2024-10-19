@@ -1,9 +1,9 @@
 import sys
 import math
 
-from PyQt5.QtWidgets import *
-from PyQt5.QtGui import *
-from PyQt5.QtCore import *
+from PyQt5.QtWidgets import QWidget, QGraphicsItem, QVBoxLayout, QApplication
+from PyQt5.QtGui import QPainterPath, QPen, QBrush, QColor, QFont, QLinearGradient
+from PyQt5.QtCore import Qt, QPointF
 
 from scene import QGMGraphicsScene
 from view import QGMGraphicsView
