@@ -26,7 +26,7 @@ class MainWindow(QWidget):
         self.modello.creaNodiAutoma()
         nodi = {}
         for key, value in reversed(self.modello.nodi.items()):
-            nodo = Nodo(0, key, value, self.scene, (4000, 2000))
+            nodo = Nodo(0, key, value, self.scene, (4000, 2000), self)
             nodi[key] = nodo
         return nodi
 
@@ -85,16 +85,6 @@ class MainWindow(QWidget):
             self.scene.removeItem(curva)
             self.scene.removeItem(label)
         self.curveItems.clear()
-    
-    def reDrawText(self):
-        for nodo in self.nodi.values():
-            nodo.drawState()
-    
-    def mousePressEvent(self, event):
-        if event.button() == Qt.LeftButton:
-            self.creaCollegamenti()
-            self.reDrawText()
-        return super().mousePressEvent(event)
     
     def disegnaCreaAutomaBottone(self):
         def ricreaAutoma():

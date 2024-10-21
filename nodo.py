@@ -1,6 +1,6 @@
-from PyQt5.QtWidgets import QGraphicsTextItem, QGraphicsItem
+from PyQt5.QtWidgets import QGraphicsTextItem, QGraphicsItem, QGraphicsEllipseItem
 from PyQt5.QtGui import QPen, QBrush, QColor, QFont
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QRectF
 
 #classe che rappresenta ogni nodo
 #y: int -> la y del nodo
@@ -14,7 +14,7 @@ class Nodo:
     fixedY = 0
     x = fixedX
     y = fixedY
-    def __init__(self, y: int = 0, stato: str = "", puntaA: dict[str, str] = {}, scene = None, coord: tuple[int] = (0, 0)):
+    def __init__(self, y: int = 0, stato: str = "", puntaA: dict[str, str] = {}, scene = None, coord: tuple[int] = (0, 0), finestra = None):
         self.x = Nodo.x + coord[0]
         self.y = Nodo.y + y + coord[1]
         
@@ -26,9 +26,11 @@ class Nodo:
         self.puntaA = puntaA    #{lettera : stato}
         self.miglioraCollegamenti()
         
-        self.showNode = scene.addEllipse(self.x, self.y, self.diametro, self.diametro, QPen(Qt.black), QBrush(QColor.fromRgbF(.15, .15, .15)))
-        self.showNode.setFlag(QGraphicsItem.ItemIsMovable)
-        self.showNode.setZValue(1)
+        self.finestra = finestra
+        
+        self.showNode = QGMGraphicsEllipseItem(QRectF(self.x, self.y, self.diametro, self.diametro),
+                                                lambda: (self.finestra.creaCollegamenti(), self.drawState()))
+        scene.addItem(self.showNode)
         
         self.textItem = QGraphicsTextItem(self.stato)
         font = QFont()
@@ -60,3 +62,18 @@ class Nodo:
         
         self.textItem.setPos(centerX, centerY)
         self.textItem.setDefaultTextColor(Qt.white)
+
+#estensione di QGraphicsEllipseItem
+class QGMGraphicsEllipseItem(QGraphicsEllipseItem):
+    def __init__(self, rect, func):
+        super().__init__(rect)
+        self.setPen(QPen(Qt.black))
+        self.setBrush(QBrush(QColor.fromRgbF(.15, .15, .15)))
+        self.setFlag(QGraphicsItem.ItemIsMovable)
+        self.setZValue(1)
+        
+        self.func = func
+
+    def mouseMoveEvent(self, event):
+        super().mouseMoveEvent(event)
+        self.func()
