@@ -62,7 +62,7 @@ class MiniWindow():
         self.textBox = QLineEdit(self.finestra)
         self.textBox.setPlaceholderText(testo)
         self.textBox.setFixedWidth(200)
-        self.textBox.returnPressed.connect(self.aggiungiInput)
+        self.textBox.returnPressed.connect(lambda: self.aggiungiInput())
         
         self.layoutFinestra.addWidget(self.textBox)
     
