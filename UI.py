@@ -27,7 +27,6 @@ class MainWindow(QWidget):
         nodi = {}
         for key, value in reversed(self.modello.nodi.items()):
             nodo = Nodo(0, key, value, self.scene, (4000, 2000))
-            nodo.showNode.setFlag(QGraphicsItem.ItemIsMovable, True)
             nodi[key] = nodo
         return nodi
 
@@ -145,7 +144,7 @@ class MainWindow(QWidget):
     def disegnaLeggenda(self):
         legendaColori = self.scene.addText("ROSSO : USCITA\nNERO  : ENTRATA", QFont("Consolas", 12))
         legendaColori.setDefaultTextColor(QColor("white"))
-        legendaColori.setFlag(QGraphicsItem.ItemIsMovable)
+        legendaColori.setFlags(QGraphicsItem.ItemIsMovable | QGraphicsItem.ItemIsSelectable)
         legendaColori.setPos(self.scene.width, self.scene.height - 200)
     
     def drawObjects(self):
