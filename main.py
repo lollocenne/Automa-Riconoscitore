@@ -49,11 +49,23 @@ class AutomaRiconoscitore:
                 value[carattere] = self.trovaCollegamentoCorto(key, carattere)
     
     #crea tutti i nodi con tutti i collegamenti
-    def creaNodiAutoma(self):
+    def creaNodiAutoma(self) -> None:
         self.__init__(self.sequenze, self.caratteri) #inizializza la classe
         for seq in self.sequenze:
             self.creaNodi(seq) #crea i nodi
         self.collegaNodi() #collega i nodi
+        self.miglioraCollegamenti()
+    
+    def miglioraCollegamenti(self) -> None:
+        for key1, value1 in self.nodi.items():
+            collegamentiNuovi = {}
+            for key2, value2 in value1.items():
+                if value2 in collegamentiNuovi:
+                    collegamentiNuovi[value2] += "," + key2
+                else:
+                    collegamentiNuovi[value2] = key2
+            
+            self.nodi[key1] = {chiavi: value2 for value2, chiavi in collegamentiNuovi.items()}
     
     def __str__(self):
         return "\n".join([f"'{key}' : '{value}'" for key, value in self.nodi.items()])

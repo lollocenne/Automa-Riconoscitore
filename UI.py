@@ -21,7 +21,7 @@ class MainWindow(QWidget):
         self.curveItems = []
         self.creaCollegamenti()
 
-    def creaNodi(self, sequenze: list[str] = [], caratteri: list[str] = []) -> dict[str, Nodo]:
+    def creaNodi(self, sequenze: list[str] = [], caratteri: list[str] = []) -> dict[str, Nodo]:        
         self.modello = AutomaRiconoscitore(sequenze, caratteri)
         self.modello.creaNodiAutoma()
         nodi = {}

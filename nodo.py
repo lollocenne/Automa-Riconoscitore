@@ -24,7 +24,6 @@ class Nodo:
         
         self.stato = stato or "<finale>"
         self.puntaA = puntaA    #{lettera : stato}
-        self.miglioraCollegamenti()
         
         self.finestra = finestra
         
@@ -40,12 +39,6 @@ class Nodo:
         
         self.drawState()
         scene.addItem(self.textItem)
-    
-    def miglioraCollegamenti(self):
-        collegamentiNuovi = {}
-        for key, value in self.puntaA.items():
-            collegamentiNuovi.setdefault(value, []).append(key)
-        self.puntaA = {','.join(keys): value for value, keys in collegamentiNuovi.items()}
 
     def getCenter(self) -> tuple[int]:
         position = self.showNode.scenePos()
