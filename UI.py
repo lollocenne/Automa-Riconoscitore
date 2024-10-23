@@ -3,7 +3,7 @@ import math
 
 from PyQt5.QtWidgets import QWidget, QGraphicsItem, QVBoxLayout, QApplication
 from PyQt5.QtGui import QPainterPath, QPen, QBrush, QColor, QFont, QLinearGradient
-from PyQt5.QtCore import Qt, QPointF
+from PyQt5.QtCore import QPointF
 
 from scene import QGMGraphicsScene
 from view import QGMGraphicsView
@@ -24,12 +24,25 @@ class MainWindow(QWidget):
     def creaNodi(self, sequenze: list[str] = [], caratteri: list[str] = []) -> dict[str, Nodo]:        
         self.modello = AutomaRiconoscitore(sequenze, caratteri)
         self.modello.creaNodiAutoma()
-        nodi = {}
+        nodi: dict[str, Nodo] = {}
+        sequenzeSbagliate = self.ignoraSequenze(sequenze)
+        print(sequenzeSbagliate)
         for key, value in reversed(self.modello.nodi.items()):
-            nodo = Nodo(0, key, value, self.scene, (4000, 2000), self)
-            nodi[key] = nodo
+            if key not in sequenzeSbagliate:
+                nodi[key] = Nodo(0, key, value, self.scene, (4000, 2000), self)
         return nodi
-
+    
+    @staticmethod
+    def ignoraSequenze(sequenze):
+        res = []
+        viste = []
+        for s in sequenze:
+            if s[1:] in viste:
+                res.append(s)
+            else:
+                viste.append(s[1:])
+        return res
+    
     def creaCollegamenti(self):
         self.clearCurves()
         for nodo in self.nodi.values():
