@@ -2,6 +2,8 @@ from PyQt5.QtWidgets import QGraphicsTextItem, QGraphicsItem, QGraphicsEllipseIt
 from PyQt5.QtGui import QPen, QBrush, QColor, QFont
 from PyQt5.QtCore import Qt, QRectF
 
+import math
+
 #classe che rappresenta ogni nodo
 #y: int -> la y del nodo
 #stato: str -> indica lo stato del nodo, questo stato verrà mostrato all'utente
@@ -46,6 +48,11 @@ class Nodo:
         centerX = position.x() + self.x + self.diametro / 2
         centerY = position.y() + self.y + self.diametro / 2
         return (centerX, centerY)
+    
+    def getBordo(self, angolo):
+        posx, posy = self.getCenter()
+        raggio = self.diametro/2
+        return (posx + raggio * math.cos(angolo), posy + raggio * math.sin(angolo))
     
     def drawState(self):
         position = self.showNode.scenePos()

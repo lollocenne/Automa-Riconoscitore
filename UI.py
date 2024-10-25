@@ -2,7 +2,7 @@ import sys
 import math
 
 from PyQt5.QtWidgets import QWidget, QGraphicsItem, QVBoxLayout, QApplication
-from PyQt5.QtGui import QPainterPath, QPen, QBrush, QColor, QFont, QLinearGradient
+from PyQt5.QtGui import QPainterPath, QPen, QBrush, QColor, QFont, QLinearGradient, QPolygonF
 from PyQt5.QtCore import QPointF
 
 from scene import QGMGraphicsScene
@@ -26,7 +26,6 @@ class MainWindow(QWidget):
         self.modello.creaNodiAutoma()
         nodi: dict[str, Nodo] = {}
         sequenzeSbagliate = self.ignoraSequenze(sequenze)
-        print(sequenzeSbagliate)
         for key, value in reversed(self.modello.nodi.items()):
             if key not in sequenzeSbagliate:
                 nodi[key] = Nodo(0, key, value, self.scene, (4000, 2000), self)
@@ -54,6 +53,8 @@ class MainWindow(QWidget):
     def disegnaCurva(self, nodo1: Nodo, nodo2: Nodo, carattere: str):
         x1, y1 = nodo1.getCenter()
         x2, y2 = nodo2.getCenter()
+        angolo = math.atan2(y1 - y2, x1 - x2)
+        x2, y2 = nodo2.getBordo(angolo)
         
         path = QPainterPath(QPointF(x1, y1))
         
@@ -71,11 +72,7 @@ class MainWindow(QWidget):
             
             path.quadTo(ctrl, QPointF(x2, y2))
         
-        gradient = QLinearGradient(QPointF(x1, y1), QPointF(x2, y2))
-        gradient.setColorAt(0, QColor("red"))      #inizio
-        gradient.setColorAt(1, QColor("black"))    #fine
-        
-        pen = QPen(QBrush(gradient), 3)
+        pen = QPen(QBrush(QColor("black")), 3)
         
         curva = self.scene.addPath(path, pen)
         curva.setZValue(0)
@@ -91,12 +88,30 @@ class MainWindow(QWidget):
         else:
             label.setPos(pointMid.x() - labelRect.width() / 2, pointMid.y() - labelRect.height() / 2 - 10)
         
-        self.curveItems.append((curva, label))
+        grandezzaFreccia = 12
+        if nodo1 != nodo2:
+            pointBeforeEnd = path.pointAtPercent(0.98)
+            angoloFreccia = math.atan2(y2 - pointBeforeEnd.y(), x2 - pointBeforeEnd.x()) + math.pi
+            frecciaP1 = QPointF(x2 + grandezzaFreccia * math.cos(angoloFreccia - math.pi / 6), y2 + grandezzaFreccia * math.sin(angoloFreccia - math.pi / 6))
+            frecciaP2 = QPointF(x2 + grandezzaFreccia * math.cos(angoloFreccia + math.pi / 6), y2 + grandezzaFreccia * math.sin(angoloFreccia + math.pi / 6))
+            punta = QPolygonF([QPointF(x2, y2), frecciaP1, frecciaP2])
+            freccia = self.scene.addPolygon(punta, QPen(QColor("black")), QBrush(QColor("black")))
+        else:
+            xFreccia = x1
+            yFreccia = y1 - nodo1.diametro / 2
+            angoloFreccia = math.pi / 2
+            frecciaP1 = QPointF(xFreccia + grandezzaFreccia * math.cos(angoloFreccia - math.pi / 6), yFreccia - grandezzaFreccia * math.sin(angoloFreccia - math.pi / 6))
+            frecciaP2 = QPointF(xFreccia + grandezzaFreccia * math.cos(angoloFreccia + math.pi / 6), yFreccia - grandezzaFreccia * math.sin(angoloFreccia + math.pi / 6))
+            punta = QPolygonF([QPointF(xFreccia, yFreccia), frecciaP1, frecciaP2])
+            freccia = self.scene.addPolygon(punta, QPen(QColor("black")), QBrush(QColor("black")))
+        
+        self.curveItems.append((curva, label, freccia))
 
     def clearCurves(self):
-        for curva, label in self.curveItems:
+        for curva, label, freccia in self.curveItems:
             self.scene.removeItem(curva)
             self.scene.removeItem(label)
+            self.scene.removeItem(freccia)
         self.curveItems.clear()
     
     def disegnaCreaAutomaBottone(self):
@@ -104,7 +119,6 @@ class MainWindow(QWidget):
             self.scene.clear()
             Nodo.x = Nodo.fixedX
             Nodo.y = Nodo.fixedY
-            self.disegnaLeggenda()
             self.nodi = self.creaNodi(self.modello.sequenze, self.modello.caratteri)
             self.curveItems = []
             self.creaCollegamenti()
@@ -144,18 +158,10 @@ class MainWindow(QWidget):
         self.layout.addWidget(self.view)
         self.showMaximized()
     
-    def disegnaLeggenda(self):
-        legendaColori = self.scene.addText("ROSSO : USCITA\nNERO  : ENTRATA", QFont("Consolas", 12))
-        legendaColori.setDefaultTextColor(QColor("white"))
-        legendaColori.setFlags(QGraphicsItem.ItemIsMovable | QGraphicsItem.ItemIsSelectable)
-        legendaColori.setPos(self.scene.width, self.scene.height - 200)
-    
     def drawObjects(self):
         self.disegnaCreaAutomaBottone()
         self.disegnaSequenzeInputs()
         self.disegnaCaratteriInputs()
-        
-        self.disegnaLeggenda()
 
 
 if __name__ == "__main__":
