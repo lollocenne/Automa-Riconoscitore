@@ -16,6 +16,7 @@ class Nodo:
     fixedY = 0
     x = fixedX
     y = fixedY
+    
     def __init__(self, y: int = 0, stato: str = "", puntaA: dict[str, str] = {}, scene = None, coord: tuple[int] = (0, 0), finestra = None):
         self.x = Nodo.x + coord[0]
         self.y = Nodo.y + y + coord[1]
@@ -49,12 +50,12 @@ class Nodo:
         centerY = position.y() + self.y + self.diametro / 2
         return (centerX, centerY)
     
-    def getBordo(self, angolo):
+    def getBordo(self, angolo: float) -> tuple[int]:
         posx, posy = self.getCenter()
         raggio = self.diametro/2
         return (posx + raggio * math.cos(angolo), posy + raggio * math.sin(angolo))
     
-    def drawState(self):
+    def drawState(self) -> None:
         position = self.showNode.scenePos()
         
         centerX = position.x() + self.x + self.diametro / 2 - self.textItem.boundingRect().width() / 2

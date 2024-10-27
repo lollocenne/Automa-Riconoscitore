@@ -1,8 +1,8 @@
 import sys
 import math
 
-from PyQt5.QtWidgets import QWidget, QGraphicsItem, QVBoxLayout, QApplication
-from PyQt5.QtGui import QPainterPath, QPen, QBrush, QColor, QFont, QLinearGradient, QPolygonF
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QApplication
+from PyQt5.QtGui import QPainterPath, QPen, QBrush, QColor, QFont, QPolygonF
 from PyQt5.QtCore import QPointF
 
 from scene import QGMGraphicsScene
@@ -89,14 +89,7 @@ class MainWindow(QWidget):
             label.setPos(pointMid.x() - labelRect.width() / 2, pointMid.y() - labelRect.height() / 2 - 10)
         
         grandezzaFreccia = 12
-        if nodo1 != nodo2:
-            pointBeforeEnd = path.pointAtPercent(0.98)
-            angoloFreccia = math.atan2(y2 - pointBeforeEnd.y(), x2 - pointBeforeEnd.x()) + math.pi
-            frecciaP1 = QPointF(x2 + grandezzaFreccia * math.cos(angoloFreccia - math.pi / 6), y2 + grandezzaFreccia * math.sin(angoloFreccia - math.pi / 6))
-            frecciaP2 = QPointF(x2 + grandezzaFreccia * math.cos(angoloFreccia + math.pi / 6), y2 + grandezzaFreccia * math.sin(angoloFreccia + math.pi / 6))
-            punta = QPolygonF([QPointF(x2, y2), frecciaP1, frecciaP2])
-            freccia = self.scene.addPolygon(punta, QPen(QColor("black")), QBrush(QColor("black")))
-        else:
+        if nodo1 is nodo2:
             xFreccia = x1
             yFreccia = y1 - nodo1.diametro / 2
             angoloFreccia = math.pi / 2
@@ -104,9 +97,16 @@ class MainWindow(QWidget):
             frecciaP2 = QPointF(xFreccia + grandezzaFreccia * math.cos(angoloFreccia + math.pi / 6), yFreccia - grandezzaFreccia * math.sin(angoloFreccia + math.pi / 6))
             punta = QPolygonF([QPointF(xFreccia, yFreccia), frecciaP1, frecciaP2])
             freccia = self.scene.addPolygon(punta, QPen(QColor("black")), QBrush(QColor("black")))
+        else:
+            pointBeforeEnd = path.pointAtPercent(0.98)
+            angoloFreccia = math.atan2(y2 - pointBeforeEnd.y(), x2 - pointBeforeEnd.x()) + math.pi
+            frecciaP1 = QPointF(x2 + grandezzaFreccia * math.cos(angoloFreccia - math.pi / 6), y2 + grandezzaFreccia * math.sin(angoloFreccia - math.pi / 6))
+            frecciaP2 = QPointF(x2 + grandezzaFreccia * math.cos(angoloFreccia + math.pi / 6), y2 + grandezzaFreccia * math.sin(angoloFreccia + math.pi / 6))
+            punta = QPolygonF([QPointF(x2, y2), frecciaP1, frecciaP2])
+            freccia = self.scene.addPolygon(punta, QPen(QColor("black")), QBrush(QColor("black")))
         
         self.curveItems.append((curva, label, freccia))
-
+    
     def clearCurves(self):
         for curva, label, freccia in self.curveItems:
             self.scene.removeItem(curva)

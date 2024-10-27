@@ -20,7 +20,7 @@ class MiniWindow():
         self.layoutFinestra.setAlignment(Qt.AlignLeft)
         self.finestra.setLayout(self.layoutFinestra)
     
-    def aggiungiLabel(self, testo):
+    def aggiungiLabel(self, testo) -> None:
         label = QLabel(testo, self.finestra)
         
         label.setFixedWidth(len(testo)*8)
@@ -30,7 +30,7 @@ class MiniWindow():
         
         self.layoutFinestra.addWidget(label)
     
-    def aggiungiBottone(self, testo = "", func = None):
+    def aggiungiBottone(self, testo = "", func = None) -> None:
         bottone = QPushButton(testo, self.finestra)
         bottone.setFixedHeight(self.finestra.height()//2)
         bottone.setFixedWidth(bottone.fontMetrics().boundingRect(bottone.text()).width() + 20)
@@ -38,7 +38,7 @@ class MiniWindow():
         
         self.layoutFinestra.addWidget(bottone)
     
-    def aggiungiBottonePermanente(self, testo = "", func = None):
+    def aggiungiBottonePermanente(self, testo = "", func = None) -> None:
         bottone = QPushButton(testo, self.finestra)
         bottone.setFixedHeight(self.finestra.height()//2)
         bottone.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
@@ -47,7 +47,7 @@ class MiniWindow():
         self.layoutFinestra.addWidget(bottone)
     
     @staticmethod
-    def bottonePremuto(bottone, testo: str, tipo: list[str], func):
+    def bottonePremuto(bottone, testo: str, tipo: list[str], func) -> None:
         if func:
             func()
         
@@ -58,7 +58,7 @@ class MiniWindow():
         
         bottone.deleteLater()
     
-    def aggiungiTextBox(self, testo: str):
+    def aggiungiTextBox(self, testo: str) -> None:
         self.textBox = QLineEdit(self.finestra)
         self.textBox.setPlaceholderText(testo)
         self.textBox.setFixedWidth(200)
@@ -66,7 +66,7 @@ class MiniWindow():
         
         self.layoutFinestra.addWidget(self.textBox)
     
-    def aggiungiInput(self):
+    def aggiungiInput(self) -> None:
         input = self.textBox.text()
         
         if not input: return
