@@ -125,3 +125,16 @@ if __name__ == "__main__":
     modello = AutomaRiconoscitore(["BBA", "ABB"], ["A", "B"])
     modello.creaNodiAutoma()
     print(modello)
+
+
+
+"""
+!Se i due stati, sono della stessa lunghezza, e iniziano uguali, vanno fatti diventare uno solo:
+    !Se uno stato s1 e uno stato s2 hanno questa caratteristica, allora lo stato s2 deve essere eliminato,
+    !ma adesso, bisogna cambiare ogni s2 in s1, anche nei collegamenti degli altri nodi
+
+*esempi di sequenze sbagliate: [ABA, ABB]
+*    nodi che si possono unire:
+*        ABB-AAB
+*        BB-AB
+"""

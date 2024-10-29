@@ -25,22 +25,9 @@ class MainWindow(QWidget):
         self.modello = AutomaRiconoscitore(sequenze, caratteri)
         self.modello.creaNodiAutoma()
         nodi: dict[str, Nodo] = {}
-        sequenzeSbagliate = self.ignoraSequenze(sequenze)
         for key, value in reversed(self.modello.nodi.items()):
-            if key not in sequenzeSbagliate:
-                nodi[key] = Nodo(0, key, value, self.scene, (4000, 2000), self)
+            nodi[key] = Nodo(0, key, value, self.scene, (4000, 2000), self)
         return nodi
-    
-    @staticmethod
-    def ignoraSequenze(sequenze):
-        res = []
-        viste = []
-        for s in sequenze:
-            if s[1:] in viste:
-                res.append(s)
-            else:
-                viste.append(s[1:])
-        return res
     
     def creaCollegamenti(self):
         self.clearCurves()
