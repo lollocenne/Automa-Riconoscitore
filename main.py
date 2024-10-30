@@ -80,8 +80,9 @@ class AutomaRiconoscitore:
         for seq in self.sequenzeOttimizzate:
             self.creaNodi(seq)  #crea i nodi
         self.collegaNodi()  #collega i nodi
-        self.miglioraCollegamenti()
         self.nodi = self.miglioraStati(self.nodi)
+        self.miglioraCollegamenti()
+        self.nodi = self.unisciStati(self.nodi)
     
     def miglioraCollegamenti(self) -> None:
         for key1, value1 in self.nodi.items():
@@ -91,6 +92,10 @@ class AutomaRiconoscitore:
                     collegamentiNuovi[value2] += "," + key2
                 else:
                     collegamentiNuovi[value2] = key2
+            
+            for value2 in collegamentiNuovi:
+                lettere = sorted(collegamentiNuovi[value2].split(","))
+                collegamentiNuovi[value2] = ",".join(lettere)
             self.nodi[key1] = {chiavi: value2 for value2, chiavi in collegamentiNuovi.items()}
     
     @staticmethod
@@ -116,12 +121,23 @@ class AutomaRiconoscitore:
                     nuoviStati[outerKey][innerKey] = statiDaSostituire[innerValue]
         return nuoviStati
     
+    @staticmethod
+    def unisciStati(stati: dict[str, dict[str, dict]]) -> dict[str, dict[str, dict]]:
+        visti = set()
+        risultato = {}
+        for key, value in stati.items():
+            collegamento = str(value)
+            if (collegamento, len(key)) not in visti:
+                visti.add((collegamento, len(key)))
+                risultato[key] = value
+        return risultato
+    
     def __str__(self):
         return f"{'-'*15}modello{'-'*15}\n" + "\n".join([f"'{key}' : '{value}'" for key, value in self.nodi.items()]) + f"\n{'-'*37}"
 
 
 
 if __name__ == "__main__":
-    modello = AutomaRiconoscitore(["BBA", "ABB"], ["A", "B"])
+    modello = AutomaRiconoscitore(["ABA", "ABB"], ["A", "B"])
     modello.creaNodiAutoma()
     print(modello)
