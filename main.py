@@ -1,143 +1,157 @@
-class AutomaRiconoscitore:
-    def __init__(self, sequenze: list[str] = [], caratteri: list[str] = []):
-        self.sequenze = sequenze
-        self.caratteri = caratteri
-        
-        self.sequenzeOttimizzate = self.ottimizzaSequenze(self.sequenze)
-        
-        #ogni nodo è un dizionario dove la chiave è la sequenza che
-        #deve riconoscere, il valore è invece un dizionario che come 
-        #chiave ha quale carattere è stato inserito, come valore ha a 
-        #quale nodo con una sequenza deve puntare:
-        #nodi = {sequenza : {carattere1 : sequenzaNodo1, carattere2 : sequenzaNodo2}}
-        #invece degli stati (s1,s2,s3) abbiamo quindi quale sequenza deve riconoscere (aba,ba,a)
-        self.nodi: dict[str, dict[str, dict]] = {}
-    
-    @staticmethod
-    def ottimizzaSequenze(sequenze: list[str]) -> list[str]:
-        def accorciaSequenze(seqe: list[str]) -> list[str]:
-            res = []
-            for s in seqe:
-                maxIdx = 0
-                n = len(s)
-                for s2 in res:
-                    if n > len(s2): continue
-                    for i in range(maxIdx, n+1):
-                        if s[:i] == s2[:i]:
-                            maxIdx = i
-                s = s[maxIdx:]
-                if s and s not in res:
-                    res.append(s)
-            return res
-        
-        def rimuoviSimili(seqe: list[str]) -> list[str]:
-            res = []
-            for s in seqe:
-                if s[1:] not in [seq[1:] for seq in res]:
-                    res.append(s)
-            return res
-        
-        return accorciaSequenze(rimuoviSimili(sequenze))
-    
-    #crea e collega i nodi, conta solo i caratteri che fanno parte della sequenza giusta
-    def creaNodi(self, sequenza: str) -> None:
-        self.nodi[""] = {}
-        for i in range(len(sequenza)-1, -1, -1):
-            if sequenza[i:] not in self.nodi:
-                self.nodi[sequenza[i:]] = {sequenza[i]: sequenza[i+1:]}
-    
-    #trova quale lettere se aggiunte a "parola" fanno "sequenza",
-    #se non lo fanno allora la prima lettera di "parola" viene tolta,
-    #se ancora non si trova ritorna la sequenza
-    def trovaCollegamento(self, sequenza: str, parola: str) -> str:
-        lenParola = len(parola)
-        while parola:
-            if parola == sequenza[:lenParola]:
-                return sequenza[lenParola:]
-            parola = parola[1:]
-            lenParola -= 1
-        return sequenza
-    
-    #richiama la funzione "trovaCollegamento()" per ogni sequenza
-    #e ritorna il collegamento con la lunghezza minore
-    def trovaCollegamentoCorto(self, key: str, carattere: str) -> str:
-        seqPossibili = []
-        for seq in self.sequenze:
-            seqPossibili.append(self.trovaCollegamento(seq, (seq[:-len(key)] if len(key) > 0 else seq) + carattere))
-        return min(seqPossibili, key=len)
-    
-    #finisce di collegare tutti i nodi controllando
-    #cosa deve succede quando inserisci un carattere sbagliato
-    def collegaNodi(self) -> None:
-        for key, value in self.nodi.items():
-            for carattere in self.caratteri:
-                if carattere not in value:
-                    value[carattere] = self.trovaCollegamentoCorto(key, carattere)
-    
-    #crea tutti i nodi con tutti i collegamenti
-    def creaNodiAutoma(self) -> None:
-        self.__init__(self.sequenze, self.caratteri)    #inizializza la classe
-        for seq in self.sequenzeOttimizzate:
-            self.creaNodi(seq)  #crea i nodi
-        self.collegaNodi()  #collega i nodi
-        self.nodi = self.miglioraStati(self.nodi)
-        self.miglioraCollegamenti()
-        self.nodi = self.unisciStati(self.nodi)
-    
-    def miglioraCollegamenti(self) -> None:
-        for key1, value1 in self.nodi.items():
-            collegamentiNuovi = {}
-            for key2, value2 in value1.items():
-                if value2 in collegamentiNuovi:
-                    collegamentiNuovi[value2] += "," + key2
-                else:
-                    collegamentiNuovi[value2] = key2
-            
-            for value2 in collegamentiNuovi:
-                lettere = sorted(collegamentiNuovi[value2].split(","))
-                collegamentiNuovi[value2] = ",".join(lettere)
-            self.nodi[key1] = {chiavi: value2 for value2, chiavi in collegamentiNuovi.items()}
-    
-    @staticmethod
-    def miglioraStati(stati: dict[str, dict[str, dict]]) -> dict[str, dict[str, dict]]:
-        nuoviStati = stati.copy()
-        statiDaSostituire = {}
-        chiavi = list(stati.keys())
-        for i in range(len(chiavi)):
-            n = len(chiavi[i])
-            s1 = chiavi[i][1:]
-            for j in range(i + 1, len(chiavi)):
-                if n != len(chiavi[j]): continue
-                
-                s2 = chiavi[j][1:]
-                if s1 == s2:
-                    statiDaSostituire[chiavi[j]] = chiavi[i]
-                    nuoviStati.pop(chiavi[j], None)
-        
-        
-        for outerKey, innerDict in nuoviStati.items():
-            for innerKey, innerValue in innerDict.items():
-                if innerValue in statiDaSostituire:
-                    nuoviStati[outerKey][innerKey] = statiDaSostituire[innerValue]
-        return nuoviStati
-    
-    @staticmethod
-    def unisciStati(stati: dict[str, dict[str, dict]]) -> dict[str, dict[str, dict]]:
-        visti = set()
-        risultato = {}
-        for key, value in stati.items():
-            collegamento = str(value)
-            if (collegamento, len(key)) not in visti:
-                visti.add((collegamento, len(key)))
-                risultato[key] = value
-        return risultato
-    
-    def __str__(self):
-        return f"{'-'*15}modello{'-'*15}\n" + "\n".join([f"'{key}' : '{value}'" for key, value in self.nodi.items()]) + f"\n{'-'*37}"
+import sys
+import math
 
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QApplication
+from PyQt5.QtGui import QPainterPath, QPen, QBrush, QColor, QFont, QPolygonF
+from PyQt5.QtCore import QPointF
+
+from scene import QGMGraphicsScene
+from view import QGMGraphicsView
+from automaRiconoscitore import AutomaRiconoscitore
+from nodo import Nodo
+from miniWindow import MiniWindow
+
+
+class MainWindow(QWidget):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.initUI()
+        self.nodi = self.creaNodi(["BBA", "ABA"], ["A", "B"])
+        self.drawObjects()
+        self.curveItems = []
+        self.creaCollegamenti()
+    
+    def creaNodi(self, sequenze: list[str] = [], caratteri: list[str] = []) -> dict[str, Nodo]:        
+        self.modello = AutomaRiconoscitore(sequenze, caratteri)
+        self.modello.creaNodiAutoma()
+        nodi: dict[str, Nodo] = {}
+        for key, value in reversed(self.modello.nodi.items()):
+            nodi[key] = Nodo(0, key, value, self.scene, (4000, 2000), self)
+        return nodi
+    
+    def creaCollegamenti(self):
+        self.clearCurves()
+        for nodo in self.nodi.values():
+            for carattere, statoDest in nodo.puntaA.items():
+                nodoDest = self.nodi.get(statoDest)
+                if nodoDest:
+                    self.disegnaCurva(nodo, nodoDest, carattere)
+    
+    def disegnaCurva(self, nodo1: Nodo, nodo2: Nodo, carattere: str):
+        x1, y1 = nodo1.getCenter()
+        x2, y2 = nodo2.getCenter()
+        angolo = math.atan2(y1 - y2, x1 - x2)
+        x2, y2 = nodo2.getBordo(angolo)
+        
+        path = QPainterPath(QPointF(x1, y1))
+        
+        if nodo1 is nodo2:
+            offset = nodo1.diametro * 1.5
+            ctrl = QPointF(x1, y1 - offset)
+            path.quadTo(ctrl, QPointF(x1, y1))
+        else:
+            offset = math.dist((x1, y1), (x2, y2)) / 2
+            
+            if y1 > y2:
+                ctrl = QPointF((x1 + x2) / 2, max(y1, y2) + offset)
+            else:
+                ctrl = QPointF((x1 + x2) / 2, min(y1, y2) - offset)
+            
+            path.quadTo(ctrl, QPointF(x2, y2))
+        
+        pen = QPen(QBrush(QColor("black")), 3)
+        
+        curva = self.scene.addPath(path, pen)
+        curva.setZValue(0)
+        
+        pointMid = path.pointAtPercent(0.5)
+        
+        label = self.scene.addText(carattere, QFont("Arial", 12))
+        label.setDefaultTextColor(QColor("white"))
+        labelRect = label.boundingRect()
+        
+        if y1 > y2:
+            label.setPos(pointMid.x() - labelRect.width() / 2, pointMid.y() + labelRect.height() / 2 - 10)
+        else:
+            label.setPos(pointMid.x() - labelRect.width() / 2, pointMid.y() - labelRect.height() / 2 - 10)
+        
+        grandezzaFreccia = 12
+        if nodo1 is nodo2:
+            xFreccia = x1
+            yFreccia = y1 - nodo1.diametro / 2
+            angoloFreccia = math.pi / 2
+            frecciaP1 = QPointF(xFreccia + grandezzaFreccia * math.cos(angoloFreccia - math.pi / 6), yFreccia - grandezzaFreccia * math.sin(angoloFreccia - math.pi / 6))
+            frecciaP2 = QPointF(xFreccia + grandezzaFreccia * math.cos(angoloFreccia + math.pi / 6), yFreccia - grandezzaFreccia * math.sin(angoloFreccia + math.pi / 6))
+            punta = QPolygonF([QPointF(xFreccia, yFreccia), frecciaP1, frecciaP2])
+            freccia = self.scene.addPolygon(punta, QPen(QColor("black")), QBrush(QColor("black")))
+        else:
+            pointBeforeEnd = path.pointAtPercent(0.98)
+            angoloFreccia = math.atan2(y2 - pointBeforeEnd.y(), x2 - pointBeforeEnd.x()) + math.pi
+            frecciaP1 = QPointF(x2 + grandezzaFreccia * math.cos(angoloFreccia - math.pi / 6), y2 + grandezzaFreccia * math.sin(angoloFreccia - math.pi / 6))
+            frecciaP2 = QPointF(x2 + grandezzaFreccia * math.cos(angoloFreccia + math.pi / 6), y2 + grandezzaFreccia * math.sin(angoloFreccia + math.pi / 6))
+            punta = QPolygonF([QPointF(x2, y2), frecciaP1, frecciaP2])
+            freccia = self.scene.addPolygon(punta, QPen(QColor("black")), QBrush(QColor("black")))
+        
+        self.curveItems.append((curva, label, freccia))
+    
+    def clearCurves(self):
+        for curva, label, freccia in self.curveItems:
+            self.scene.removeItem(curva)
+            self.scene.removeItem(label)
+            self.scene.removeItem(freccia)
+        self.curveItems.clear()
+    
+    def disegnaCreaAutomaBottone(self):
+        def ricreaAutoma():
+            self.scene.clear()
+            Nodo.x = Nodo.fixedX
+            Nodo.y = Nodo.fixedY
+            self.nodi = self.creaNodi(self.modello.sequenze, self.modello.caratteri)
+            self.curveItems = []
+            self.creaCollegamenti()
+        
+        finestra = MiniWindow(self)
+        finestra.aggiungiBottonePermanente("CREA AUTOMA", ricreaAutoma)
+        
+        self.layout.addWidget(finestra.getayout())
+    
+    def disegnaSequenzeInputs(self):
+        finestra = MiniWindow(self, self.modello.sequenze)
+        finestra.aggiungiLabel("Sequenza:")
+        finestra.aggiungiTextBox("Scrivi Sequenza")
+        for s in self.modello.sequenze:
+            finestra.aggiungiBottone(s)
+        
+        self.layout.addWidget(finestra.getayout())
+    
+    def disegnaCaratteriInputs(self):
+        finestra = MiniWindow(self, self.modello.caratteri)
+        finestra.aggiungiLabel("Caratteri:")
+        finestra.aggiungiTextBox("Scrivi Carattere")
+        for c in self.modello.caratteri:
+            finestra.aggiungiBottone(c)
+        
+        self.layout.addWidget(finestra.getayout())
+    
+    def initUI(self):
+        self.setWindowTitle("Automa Riconoscitore")
+        self.layout = QVBoxLayout()
+        self.layout.setContentsMargins(0, 0, 0, 0)
+        self.setLayout(self.layout)
+        
+        self.scene = QGMGraphicsScene()
+        self.view = QGMGraphicsView(self.scene, self)
+        
+        self.layout.addWidget(self.view)
+        self.showMaximized()
+    
+    def drawObjects(self):
+        self.disegnaCreaAutomaBottone()
+        self.disegnaSequenzeInputs()
+        self.disegnaCaratteriInputs()
 
 
 if __name__ == "__main__":
-    modello = AutomaRiconoscitore(["ABA", "ABB"], ["A", "B"])
-    modello.creaNodiAutoma()
-    print(modello)
+    app = QApplication(sys.argv)
+    window = MainWindow()
+    sys.exit(app.exec())
