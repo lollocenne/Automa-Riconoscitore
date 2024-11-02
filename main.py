@@ -16,7 +16,7 @@ class MainWindow(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.initUI()
-        self.nodi = self.creaNodi(["BBA", "ABA"], ["A", "B"])
+        self.nodi = self.creaNodi(["ABA", "ABB"], ["A", "B"])
         self.drawObjects()
         self.curveItems = []
         self.creaCollegamenti()
@@ -25,7 +25,7 @@ class MainWindow(QWidget):
         self.modello = AutomaRiconoscitore(sequenze, caratteri)
         self.modello.creaNodiAutoma()
         nodi: dict[str, Nodo] = {}
-        for key, value in reversed(self.modello.nodi.items()):
+        for key, value in self.modello.nodi.items():
             nodi[key] = Nodo(0, key, value, self.scene, (4000, 2000), self)
         return nodi
     
