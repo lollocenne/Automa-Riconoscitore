@@ -51,7 +51,7 @@
       </ol>
     </li>
     <li>
-      <b>Definire nodi finali</b>
+      <b>Definire nodi finali</b><br>
       I nodi finali sono tutti i nodi che nella loro lista <code>sequenze</code> contengono una sequenza da riconoscere.
     </li>
   </ol>
