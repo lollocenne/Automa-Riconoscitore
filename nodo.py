@@ -9,7 +9,7 @@ import math
 #stato: str -> indica lo stato del nodo, questo stato verrà mostrato all'utente
 #puntaA: dict[str : str] -> dizionario che indica per ogni carattere possibile a quale stato bisogna collegare il nodo
 
-#ogni nodo sarà salvato in un dizionario con lo stato come chiave, e l'istanza come valore
+#ogni nodo sarà salvato in un dizionario con lo stato come chiave e l'istanza come valore
 
 class Nodo:
     fixedX = -300
@@ -25,7 +25,7 @@ class Nodo:
         Nodo.x += self.diametro*2.5
         Nodo.y += 1
         
-        self.stato = stato or "<finale>"
+        self.stato = stato
         self.puntaA = puntaA    #{lettera : stato}
         
         self.finestra = finestra

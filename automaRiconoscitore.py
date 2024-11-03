@@ -4,30 +4,19 @@ class AutomaRiconoscitore:
     def __init__(self, sequenze: list[str] = [], caratteri: list[str] = ()):
         self.sequenze = sequenze
         self.sequenze.sort(key=len, reverse=True)
-        self.sequenzeSemplici = self.lunghezzaUguale(self.semplificaSequenze(self.sequenze))
+        self.sequenzeSemplici = self.semplificaSequenze(self.sequenze)
         self.caratteri = caratteri
         self.nodi: dict[str, dict[str,str]] = {}    #{stato: {carattere: stato2}}
     
     #da sequenze elimina quelle che sono gia contenute
     #all'inizio di un altra sequenza
     @staticmethod
-    def semplificaSequenze(sequenze) -> list[str]:
+    def semplificaSequenze(sequenze: list[str]) -> list[str]:
         res = []
         for seq in sequenze:
             if not any(seq != s and s.startswith(seq) for s in res):
                 res.append(seq)
         return res
-    
-    @staticmethod
-    def lunghezzaUguale(sequenze):
-        if not sequenze: return []
-        lenTarget = len(sequenze[0])
-        nuoveSequenze = []
-        for seq in sequenze:
-            nuovaSequenza = sequenze[0][:(lenTarget - len(seq))] + seq
-            if nuovaSequenza not in nuoveSequenze:
-                nuoveSequenze.append(nuovaSequenza)
-        return nuoveSequenze
     
     #crea una lista di tutte le istanze di NodoAutoma create
     @staticmethod
@@ -54,16 +43,17 @@ class AutomaRiconoscitore:
     def connettiNodi(self, listaNodi: list[NodoAutoma]) -> None:
         for nodo in listaNodi:
             for c in self.caratteri:
-                if any(c in chiave.split(',') for chiave in nodo.puntaA): continue
+                if c in nodo.puntaA: continue
                 idx = 0
                 while c not in nodo.puntaA:
                     for seq in nodo.attuale:
                         seq += c
                         for nodoDestinazione in listaNodi:
-                            for seq2 in nodoDestinazione.sequenze:
+                            for seq2 in (nodoDestinazione.sequenze or [""] ):
                                 if seq[idx:] + seq2 in self.sequenze:
                                     nodo.puntaA[c] = nodoDestinazione
                     idx += 1
+            nodo.unisciPuntaA()
     
     #se una sequenze di nodo.attuale è in sequenze allora è uno stato finale
     def getFinali(self) -> list[str]:

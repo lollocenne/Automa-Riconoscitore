@@ -41,7 +41,6 @@ class NodoAutoma:
             else:
                 self.puntaA[inizio] = NodoAutoma([continuo] if continuo else [], [att + inizio for att in self.attuale])
         
-        self.unisciPuntaA()
         self.creaNodiSuccessivi()
     
     #crea tutti i nodi successivi
@@ -64,4 +63,4 @@ if __name__ == "__main__":
     nodo = NodoAutoma(["ABA", "BBA"], [""])
     nodo.inizializza()
     nodo.calcolaPunta()
-    print(nodo.puntaA["A,B"].puntaA["B"].puntaA["A"].stato)     #nodo dopo aver inserito la sequenza ABA oppure BBA
+    print(nodo.puntaA["B"].puntaA["B"].puntaA["A"].stato)     #nodo dopo aver inserito la sequenza BBA
