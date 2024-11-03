@@ -35,19 +35,35 @@ class AutomaRiconoscitore:
     def creaNodiAutoma(self) -> None:
         listaNodi = self.creaListaNodi(NodoAutoma(self.sequenze))
         listaNodi.sort(key=lambda n: int(n.stato[1:]))  #ordina in base allo stato (forse è inutile lol)
+        self.connettiNodi(listaNodi)
         for n in listaNodi:
             self.creaDizionarioStati(n)
+    
+    #connette i nodi con i caratteri rimasti
+    def connettiNodi(self, listaNodi: list[NodoAutoma]) -> None:
+        for nodo in listaNodi:
+            for c in self.caratteri:
+                if any(c in chiave.split(',') for chiave in nodo.puntaA): continue
+                idx = 0
+                while c not in nodo.puntaA:
+                    for seq in nodo.attuale:
+                        seq += c
+                        for nodoDestinazione in listaNodi:
+                            for seq2 in nodoDestinazione.sequenze:
+                                if seq[idx:] + seq2 in self.sequenze:
+                                    nodo.puntaA[c] = nodoDestinazione
+                    idx += 1
     
     #trasforma la lista di NodoAutoma in un dizionario dove la chiave è
     #NodoAutoma.stato e il valore è NodoAutoma.puntaA
     def creaDizionarioStati(self, nodo: NodoAutoma) -> None:
         self.nodi[nodo.stato] = {key: punta.stato for key, punta in nodo.puntaA.items()}
-
+    
     
     def __str__(self):
         return f"{'-'*15}modello{'-'*15}\n" + "\n".join([f"'{key}' : '{value}'" for key, value in self.nodi.items()]) + f"\n{'-'*37}"
 
 if __name__ == "__main__":
-    modello = AutomaRiconoscitore(["ABA", "ABB"], ("A", "B"))
+    modello = AutomaRiconoscitore(["ABA", "BBA"], ("A", "B"))
     modello.creaNodiAutoma()
     print(modello)

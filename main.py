@@ -16,7 +16,7 @@ class MainWindow(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.initUI()
-        self.nodi = self.creaNodi(["ABA", "ABB"], ["A", "B"])
+        self.nodi = self.creaNodi(["ABA", "BBA"], ["A", "B"])
         self.drawObjects()
         self.curveItems = []
         self.creaCollegamenti()
@@ -52,10 +52,10 @@ class MainWindow(QWidget):
         else:
             offset = math.dist((x1, y1), (x2, y2)) / 2
             
-            if y1 > y2:
-                ctrl = QPointF((x1 + x2) / 2, max(y1, y2) + offset)
+            if y1 < y2:
+                ctrl = QPointF((x1 + x2) / 2, max(y1, y2) - offset)
             else:
-                ctrl = QPointF((x1 + x2) / 2, min(y1, y2) - offset)
+                ctrl = QPointF((x1 + x2) / 2, min(y1, y2) + offset)
             
             path.quadTo(ctrl, QPointF(x2, y2))
         
@@ -70,7 +70,7 @@ class MainWindow(QWidget):
         label.setDefaultTextColor(QColor("white"))
         labelRect = label.boundingRect()
         
-        if y1 > y2:
+        if y1 < y2:
             label.setPos(pointMid.x() - labelRect.width() / 2, pointMid.y() + labelRect.height() / 2 - 10)
         else:
             label.setPos(pointMid.x() - labelRect.width() / 2, pointMid.y() - labelRect.height() / 2 - 10)

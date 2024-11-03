@@ -1,5 +1,6 @@
 from PyQt5.QtWidgets import QFrame, QHBoxLayout, QLabel, QPushButton, QSizePolicy, QLineEdit
 from PyQt5.QtCore import Qt
+from nodoAutoma import NodoAutoma
 
 
 class MiniWindow():
@@ -42,7 +43,7 @@ class MiniWindow():
         bottone = QPushButton(testo, self.finestra)
         bottone.setFixedHeight(self.finestra.height()//2)
         bottone.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
-        bottone.clicked.connect(func)
+        bottone.clicked.connect(lambda: (func(), setattr(NodoAutoma, 'stato', 0)))
         
         self.layoutFinestra.addWidget(bottone)
     
