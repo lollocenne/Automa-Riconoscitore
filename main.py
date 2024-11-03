@@ -24,9 +24,10 @@ class MainWindow(QWidget):
     def creaNodi(self, sequenze: list[str] = [], caratteri: list[str] = []) -> dict[str, Nodo]:        
         self.modello = AutomaRiconoscitore(sequenze, caratteri)
         self.modello.creaNodiAutoma()
+        statiFinali = self.modello.getFinali()
         nodi: dict[str, Nodo] = {}
         for key, value in self.modello.nodi.items():
-            nodi[key] = Nodo(0, key, value, self.scene, (4000, 2000), self)
+            nodi[key] = Nodo(0, "<finale>" + key[1:] if key in statiFinali else key, value, self.scene, (4000, 2000), self)
         return nodi
     
     def creaCollegamenti(self):
@@ -104,11 +105,12 @@ class MainWindow(QWidget):
     def disegnaCreaAutomaBottone(self):
         def ricreaAutoma():
             self.scene.clear()
-            Nodo.x = Nodo.fixedX
-            Nodo.y = Nodo.fixedY
-            self.nodi = self.creaNodi(self.modello.sequenze, self.modello.caratteri)
-            self.curveItems = []
-            self.creaCollegamenti()
+            if self.modello.sequenze:
+                Nodo.x = Nodo.fixedX
+                Nodo.y = Nodo.fixedY
+                self.nodi = self.creaNodi(self.modello.sequenze, self.modello.caratteri)
+                self.curveItems = []
+                self.creaCollegamenti()
         
         finestra = MiniWindow(self)
         finestra.aggiungiBottonePermanente("CREA AUTOMA", ricreaAutoma)

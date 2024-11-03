@@ -4,19 +4,30 @@ class AutomaRiconoscitore:
     def __init__(self, sequenze: list[str] = [], caratteri: list[str] = ()):
         self.sequenze = sequenze
         self.sequenze.sort(key=len, reverse=True)
-        self.sequenzeSemplici = self.semplificaSequenze()
+        self.sequenzeSemplici = self.lunghezzaUguale(self.semplificaSequenze(self.sequenze))
         self.caratteri = caratteri
-        
-        self.nodi: dict[str, dict[str,str]] = {}
+        self.nodi: dict[str, dict[str,str]] = {}    #{stato: {carattere: stato2}}
     
-    #dalle sequenze elimina quelle che sono gia contenute
+    #da sequenze elimina quelle che sono gia contenute
     #all'inizio di un altra sequenza
-    def semplificaSequenze(self) -> list[str]:
+    @staticmethod
+    def semplificaSequenze(sequenze) -> list[str]:
         res = []
-        for seq in self.sequenze:
+        for seq in sequenze:
             if not any(seq != s and s.startswith(seq) for s in res):
                 res.append(seq)
         return res
+    
+    @staticmethod
+    def lunghezzaUguale(sequenze):
+        if not sequenze: return []
+        lenTarget = len(sequenze[0])
+        nuoveSequenze = []
+        for seq in sequenze:
+            nuovaSequenza = sequenze[0][:(lenTarget - len(seq))] + seq
+            if nuovaSequenza not in nuoveSequenze:
+                nuoveSequenze.append(nuovaSequenza)
+        return nuoveSequenze
     
     #crea una lista di tutte le istanze di NodoAutoma create
     @staticmethod
@@ -33,10 +44,10 @@ class AutomaRiconoscitore:
         return list(visitati)
     
     def creaNodiAutoma(self) -> None:
-        listaNodi = self.creaListaNodi(NodoAutoma(self.sequenze))
-        listaNodi.sort(key=lambda n: int(n.stato[1:]))  #ordina in base allo stato (forse è inutile lol)
-        self.connettiNodi(listaNodi)
-        for n in listaNodi:
+        self.listaNodi = self.creaListaNodi(NodoAutoma(self.sequenzeSemplici))
+        self.listaNodi.sort(key=lambda n: int(n.stato[1:]))  #ordina in base allo stato (forse è inutile lol)
+        self.connettiNodi(self.listaNodi)
+        for n in self.listaNodi:
             self.creaDizionarioStati(n)
     
     #connette i nodi con i caratteri rimasti
@@ -53,6 +64,11 @@ class AutomaRiconoscitore:
                                 if seq[idx:] + seq2 in self.sequenze:
                                     nodo.puntaA[c] = nodoDestinazione
                     idx += 1
+    
+    #se una sequenze di nodo.attuale è in sequenze allora è uno stato finale
+    def getFinali(self) -> list[str]:
+        sequenzeSet = set(self.sequenze)
+        return [nodo.stato for nodo in self.listaNodi if set(nodo.attuale) & sequenzeSet]
     
     #trasforma la lista di NodoAutoma in un dizionario dove la chiave è
     #NodoAutoma.stato e il valore è NodoAutoma.puntaA
